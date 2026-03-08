@@ -1,0 +1,575 @@
+openapi: 3.0.0
+info:
+  title: Acme Realty API
+  version: 1.0.0
+  description: >
+    Real estate data and lead-capture API for Acme Realty Co.
+    Use these tools to look up projects, answer FAQs, retrieve company details,
+    and handle the OTP verification + callback registration flow for lead capture.
+servers:
+  - url: 'http://localhost:8080'
+
+paths:
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Projects
+  # ────────────────────────────────────────────────────────────────────────────
+  /projects/:
+    get:
+      summary: Search real estate projects
+      operationId: searchProjects
+      description: >
+        Search and filter the Acme Realty project catalogue.
+        Use this tool when a user asks about available properties, projects in a
+        specific city or locality, a particular configuration (e.g. 2 BHK), a
+        budget range, a property category (apartment, villa, commercial), or a
+        possession / handover timeline.
+        All query parameters are optional and can be combined freely.
+        Examples of when to call this:
+        "Do you have 2 BHK flats in Ahmedabad?",
+        "Show me villas under 3 crore",
+        "Which projects are ready to move in?",
+        "Any commercial offices in Gandhinagar?"
+      parameters:
+        - name: city
+          in: query
+          required: false
+          description: >
+            Filter by city (case-insensitive).
+            Supported values: Ahmedabad, Gandhinagar, Surat.
+          schema:
+            type: string
+            example: Ahmedabad
+        - name: locality
+          in: query
+          required: false
+          description: >
+            Filter by locality or neighbourhood within a city
+            (case-insensitive, partial match).
+            Examples: Bopal, Thaltej, Infocity.
+          schema:
+            type: string
+            example: Bopal
+        - name: name
+          in: query
+          required: false
+          description: >
+            Filter by project name (case-insensitive, partial match).
+            Example: "Skyline" matches "Skyline Heights".
+          schema:
+            type: string
+            example: Skyline
+        - name: unit_type
+          in: query
+          required: false
+          description: >
+            Filter by unit configuration (case-insensitive, partial match).
+            Examples: "2 BHK", "3 BHK", "4 BHK Villa", "Office Suite".
+          schema:
+            type: string
+            example: 2 BHK
+        - name: property_type
+          in: query
+          required: false
+          description: >
+            Filter by property category (case-insensitive, partial match).
+            Examples: "Apartment", "Villa", "Commercial".
+          schema:
+            type: string
+            example: Villa
+        - name: price_min
+          in: query
+          required: false
+          description: >
+            Minimum price in INR lakh. A project matches if any of its inventory
+            units overlaps this range. Crore-priced units are converted automatically
+            (1 crore = 100 lakh). Example: 60 means 60 lakh.
+          schema:
+            type: number
+            example: 60
+        - name: price_max
+          in: query
+          required: false
+          description: >
+            Maximum price in INR lakh. Example: 300 means 3 crore.
+          schema:
+            type: number
+            example: 300
+        - name: possession
+          in: query
+          required: false
+          description: >
+            Filter by possession / handover timeline (case-insensitive, partial match).
+            Examples: "2027", "2028", "Immediate" for ready-to-move projects.
+          schema:
+            type: string
+            example: Immediate
+      responses:
+        '200':
+          description: Projects matching the given filters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of projects returned.
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        project_id:
+                          type: string
+                          description: Unique identifier for the project.
+                        name:
+                          type: string
+                          description: Display name of the project.
+                        type:
+                          type: string
+                          description: Property category, e.g. "Residential Apartments", "Luxury Villas", "Commercial Offices".
+                        status:
+                          type: string
+                          description: Current sales/construction status, e.g. "Under Construction", "Ready to Move", "New Launch".
+                        city:
+                          type: string
+                        locality:
+                          type: string
+                        address:
+                          type: string
+                        highlights:
+                          type: array
+                          items:
+                            type: string
+                          description: Key selling points of the project.
+                        inventory:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              unit_type:
+                                type: string
+                                description: Configuration label, e.g. "2 BHK", "3 BHK", "4 BHK Villa", "Office Suite".
+                              carpet_sqft_range:
+                                type: array
+                                items:
+                                  type: number
+                                description: "[min, max] carpet area in square feet."
+                              price_range_inr_lakh:
+                                type: array
+                                items:
+                                  type: number
+                                description: "[min, max] price in INR lakh. Present for most residential units."
+                              price_range_inr_crore:
+                                type: array
+                                items:
+                                  type: number
+                                description: "[min, max] price in INR crore. Present for premium/villa units."
+                        possession_timeline:
+                          type: string
+                          description: Estimated handover date or "Immediate" for ready-to-move projects.
+                        amenities:
+                          type: array
+                          items:
+                            type: string
+                        nearby:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              place:
+                                type: string
+                              distance_km:
+                                type: number
+                        site_visit:
+                          type: object
+                          properties:
+                            available:
+                              type: boolean
+                              description: Whether site visits can be scheduled.
+                            sample_flat:
+                              type: boolean
+                              description: Whether a sample / model flat is available to view.
+                            visit_timings:
+                              type: string
+                              description: Days and time window for visits.
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # FAQs
+  # ────────────────────────────────────────────────────────────────────────────
+  /faqs/:
+    get:
+      summary: Search company FAQs
+      operationId: searchFaqs
+      description: >
+        Search the Acme Realty FAQ knowledge base.
+        Use this tool when a user asks a general question about company policies,
+        services, processes, or pricing that may already be answered in the FAQs.
+        Examples: "Do you charge brokerage?", "How do I schedule a site visit?",
+        "Do you help with paperwork?", "What services do you offer?".
+        Omit the q parameter to retrieve all FAQs.
+      parameters:
+        - name: q
+          in: query
+          required: false
+          description: >
+            Keyword to search across FAQ questions and answers
+            (case-insensitive, partial match).
+            Examples: "brokerage", "visit", "registration", "loan".
+          schema:
+            type: string
+            example: brokerage
+      responses:
+        '200':
+          description: Matching FAQ entries, or all FAQs when no keyword is given.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of FAQ entries returned.
+                  faqs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        q:
+                          type: string
+                          description: The FAQ question.
+                        a:
+                          type: string
+                          description: The FAQ answer.
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Company
+  # ────────────────────────────────────────────────────────────────────────────
+  /company/:
+    get:
+      summary: Get company details
+      operationId: getCompany
+      description: >
+        Retrieve the full Acme Realty company profile.
+        Use this tool when a user asks about the company itself — its services,
+        office address, phone number, email, business hours, service areas,
+        or general policies.
+        Examples: "Where is your office?", "What are your working hours?",
+        "Which cities do you operate in?", "How can I contact you?".
+      responses:
+        '200':
+          description: Full company profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tagline:
+                    type: string
+                  about:
+                    type: string
+                  service_areas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        city:
+                          type: string
+                        primary_localities:
+                          type: array
+                          items:
+                            type: string
+                  services:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        service_key:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                  contact:
+                    type: object
+                    properties:
+                      phone:
+                        type: string
+                      whatsapp:
+                        type: string
+                      email:
+                        type: string
+                      website:
+                        type: string
+                      office_address:
+                        type: string
+                      business_hours:
+                        type: object
+                        properties:
+                          mon_fri:
+                            type: string
+                          sat:
+                            type: string
+                          sun:
+                            type: string
+                  policies:
+                    type: object
+                    properties:
+                      data_privacy_note:
+                        type: string
+                      response_boundary:
+                        type: string
+                  faqs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        q:
+                          type: string
+                          description: The FAQ question.
+                        a:
+                          type: string
+                          description: The FAQ answer.
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Leads — OTP & Callback
+  # ────────────────────────────────────────────────────────────────────────────
+  /leads/send-otp:
+    post:
+      summary: Send OTP to a mobile number
+      operationId: sendOtp
+      description: >
+        Generate and send a 6-digit OTP to the given mobile number.
+        Call this as the first step of the identity-verification flow before
+        registering a callback or capturing a lead.
+        Use when a user provides their phone number and you need to verify it.
+        Note: in this environment the OTP is printed to server logs only.
+      requestBody:
+        required: true
+        description: Mobile number to send the OTP to.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+              properties:
+                mobile:
+                  type: string
+                  description: >
+                    The user's mobile number. Accepts formats with country code,
+                    spaces, or dashes — e.g. "+91 98765 43210" or "9876543210".
+                  example: '9876543210'
+      responses:
+        '200':
+          description: OTP sent successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - message
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    description: Confirmation message.
+
+  /leads/verify-otp:
+    post:
+      summary: Verify OTP for a mobile number
+      operationId: verifyOtp
+      description: >
+        Verify the 6-digit OTP previously sent to a mobile number.
+        Call this after the user provides the OTP they received.
+        The OTP is single-use — it is deleted on successful verification.
+        Returns HTTP 400 if the OTP is wrong or has not been requested.
+      requestBody:
+        required: true
+        description: Mobile number and the OTP to verify.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+                - otp
+              properties:
+                mobile:
+                  type: string
+                  description: The mobile number the OTP was sent to.
+                  example: '9876543210'
+                otp:
+                  type: string
+                  description: The 6-digit OTP entered by the user.
+                  example: '482910'
+      responses:
+        '200':
+          description: OTP verified successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - message
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Invalid or expired OTP.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    description: Human-readable error message.
+
+  /leads/register-callback:
+    post:
+      summary: Register a callback request
+      operationId: registerCallback
+      description: >
+        Save a lead's callback request so the Acme Realty team can follow up.
+        Call this after OTP verification when the user confirms they want to be
+        contacted by an advisor.
+        The preferred_time field is optional — collect it if the user mentions
+        a convenient time, otherwise omit it.
+        Examples of when to call this:
+        "Please have someone call me",
+        "I'd like a callback tomorrow morning",
+        "Connect me with an advisor".
+      requestBody:
+        required: true
+        description: Lead details for the callback.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+                - name
+              properties:
+                mobile:
+                  type: string
+                  description: The verified mobile number of the lead.
+                  example: '9876543210'
+                name:
+                  type: string
+                  description: Full name of the lead.
+                  example: Raj Mehta
+                preferred_time:
+                  type: string
+                  description: >
+                    Optional preferred time window for the callback.
+                    Free-text — e.g. "Tomorrow 11am", "Weekday evenings",
+                    "Anytime after 6pm".
+                  example: Tomorrow 11am
+      responses:
+        '200':
+          description: Callback registered successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - message
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    description: Confirmation message for the user.
+
+
+  /leads/sell-property-callback:
+    post:
+      summary: Register a sell-property callback request
+      operationId: sellPropertyCallback
+      description: >
+        Save a callback request from a user who wants to sell their property so
+        the Acme Realty team can follow up with a valuation or listing consultation.
+        Call this after OTP verification when the user expresses intent to sell.
+        Collect name, mobile, city/locality, and property type as required fields;
+        preferred_time is optional — include it only if the user mentions a
+        convenient time.
+        Examples of when to call this:
+        "I want to sell my flat in Bopal",
+        "Can someone help me list my villa?",
+        "I'm looking to sell my 3 BHK apartment in Ahmedabad",
+        "Please have someone contact me about selling my property".
+      requestBody:
+        required: true
+        description: Seller details for the callback.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - mobile
+                - city_locality
+                - property_type
+              properties:
+                name:
+                  type: string
+                  description: Full name of the seller.
+                  example: Priya Shah
+                mobile:
+                  type: string
+                  description: >
+                    The seller's mobile number. Accepts formats with country code,
+                    spaces, or dashes — e.g. "+91 98765 43210" or "9876543210".
+                  example: '9876543210'
+                city_locality:
+                  type: string
+                  description: >
+                    City and/or locality where the property is located.
+                    Free-text — e.g. "Bopal, Ahmedabad", "Infocity Gandhinagar", "Surat".
+                  example: Bopal, Ahmedabad
+                property_type:
+                  type: string
+                  description: >
+                    Type of property the seller wants to list.
+                    Free-text — e.g. "2 BHK Apartment", "Villa", "Commercial Office",
+                    "Plot", "Row House".
+                  example: 3 BHK Apartment
+                preferred_time:
+                  type: string
+                  description: >
+                    Optional preferred time window for the callback.
+                    Free-text — e.g. "Tomorrow 11am", "Weekday evenings",
+                    "Anytime after 6pm".
+                  example: Tomorrow 11am
+      responses:
+        '200':
+          description: Sell-property callback registered successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - message
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    description: Confirmation message for the user.
+
+
+components:
+  schemas: {}

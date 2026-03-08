@@ -1,0 +1,161 @@
+{
+  "company": {
+    "id": "acme-realty-001",
+    "name": "Acme Realty Co.",
+    "tagline": "Homes, investments, and smooth transactions—end to end.",
+    "about": "Acme Realty Co. is a full-service real estate company helping customers buy, sell, and rent residential and commercial properties. We provide verified listings, guided site visits, paperwork support, and home-loan assistance through partner banks.",
+    "service_areas": [
+      { "city": "Ahmedabad", "primary_localities": ["Bopal", "SG Highway", "Gota", "Thaltej", "Prahlad Nagar"] },
+      { "city": "Gandhinagar", "primary_localities": ["Kudasan", "Sargasan", "Infocity", "Sector 21"] },
+      { "city": "Surat", "primary_localities": ["Vesu", "Adajan", "Pal", "City Light"] }
+    ],
+    "services": [
+      {
+        "service_key": "buy",
+        "name": "Buy Property",
+        "description": "Shortlist verified properties, schedule visits, negotiate, and complete documentation."
+      },
+      {
+        "service_key": "sell",
+        "name": "Sell Property",
+        "description": "Pricing guidance, listing creation, buyer screening, and closing support."
+      },
+      {
+        "service_key": "rent",
+        "name": "Rent / Lease",
+        "description": "Rental discovery and lease support for owners and tenants."
+      },
+      {
+        "service_key": "loan_support",
+        "name": "Home Loan Support",
+        "description": "Assistance with loan eligibility checks and partner bank coordination."
+      }
+    ],
+    "contact": {
+      "phone": "+91 79 4000 1212",
+      "whatsapp": "+91 90000 11011",
+      "email": "support@acmerealty.example",
+      "website": "https://acmerealty.example",
+      "office_address": "Acme Realty Co., 7th Floor, Skyline Business Park, SG Highway, Ahmedabad, Gujarat 380054",
+      "business_hours": {
+        "mon_fri": "10:00 AM - 7:00 PM",
+        "sat": "10:00 AM - 4:00 PM",
+        "sun": "Closed"
+      }
+    },
+    "policies": {
+      "data_privacy_note": "We only collect details required to schedule a callback or property visit. We do not store card details.",
+      "response_boundary": "The agent provides general information and lead capture. Final pricing and legal verification are handled by a human advisor."
+    },
+    "faqs": [
+      {
+        "q": "Do you charge brokerage?",
+        "a": "Yes. Brokerage depends on the service type (buy/sell/rent) and property value. A human advisor can share exact charges after understanding requirements."
+      },
+      {
+        "q": "Do you help with registration and paperwork?",
+        "a": "Yes. We support documentation, agreement drafting assistance, and coordination with legal/registration partners."
+      },
+      {
+        "q": "Can I schedule a site visit?",
+        "a": "Yes. Share your preferred location/project, date/time window, and we will arrange it."
+      }
+    ]
+  },
+  "projects": [
+    {
+      "project_id": "ahm-skyline-heights",
+      "name": "Skyline Heights",
+      "type": "Residential Apartments",
+      "status": "Under Construction",
+      "city": "Ahmedabad",
+      "locality": "Bopal",
+      "address": "Near SP Ring Road, Bopal, Ahmedabad",
+      "highlights": [
+        "2 & 3 BHK premium apartments",
+        "10-minute drive to SG Highway",
+        "Clubhouse + pool + gym",
+        "IGBC pre-certified green building"
+      ],
+      "inventory": [
+        { "unit_type": "2 BHK", "carpet_sqft_range": [680, 760], "price_range_inr_lakh": [58, 72] },
+        { "unit_type": "3 BHK", "carpet_sqft_range": [910, 1040], "price_range_inr_lakh": [78, 96] }
+      ],
+      "possession_timeline": "Dec 2027 (estimated)",
+      "amenities": ["Gym", "Swimming Pool", "Kids Play Area", "Jogging Track", "24x7 Security", "Covered Parking"],
+      "nearby": [
+        { "place": "TRP Mall", "distance_km": 4.2 },
+        { "place": "City Hospital", "distance_km": 3.1 },
+        { "place": "International School", "distance_km": 2.4 }
+      ],
+      "site_visit": {
+        "available": true,
+        "sample_flat": true,
+        "visit_timings": "11:00 AM - 6:00 PM (Mon-Sat)"
+      }
+    },
+    {
+      "project_id": "ahm-orchard-villas",
+      "name": "Orchard Villas",
+      "type": "Luxury Villas",
+      "status": "Ready to Move",
+      "city": "Ahmedabad",
+      "locality": "Thaltej",
+      "address": "Orchard Villas Lane, Thaltej, Ahmedabad",
+      "highlights": [
+        "4 BHK independent villas",
+        "Private garden + terrace",
+        "Gated community with premium security",
+        "Near major cafes and offices"
+      ],
+      "inventory": [
+        { "unit_type": "4 BHK Villa", "carpet_sqft_range": [2100, 2450], "price_range_inr_lakh": [235, 310] }
+      ],
+      "possession_timeline": "Immediate",
+      "amenities": ["Private Garden", "Clubhouse", "CCTV", "Power Backup", "Visitor Parking"],
+      "nearby": [
+        { "place": "Metro Station (proposed)", "distance_km": 2.0 },
+        { "place": "Business Hub", "distance_km": 3.8 }
+      ],
+      "site_visit": {
+        "available": true,
+        "sample_flat": false,
+        "visit_timings": "10:30 AM - 5:30 PM (All days)"
+      }
+    },
+    {
+      "project_id": "gnr-riverfront-commercial",
+      "name": "Riverfront Business Center",
+      "type": "Commercial Offices",
+      "status": "New Launch",
+      "city": "Gandhinagar",
+      "locality": "Infocity",
+      "address": "Sector 15, Infocity, Gandhinagar",
+      "highlights": [
+        "Grade-A office spaces",
+        "High-speed elevators",
+        "Food court + conference facilities",
+        "Near IT parks"
+      ],
+      "inventory": [
+        { "unit_type": "Office Suite", "carpet_sqft_range": [450, 1200], "price_range_inr_lakh": [42, 120] }
+      ],
+      "possession_timeline": "Mar 2028 (estimated)",
+      "amenities": ["Cafeteria", "Conference Rooms", "Security", "Parking", "24x7 Power Backup"],
+      "nearby": [
+        { "place": "Tech Park", "distance_km": 1.5 },
+        { "place": "Highway Access", "distance_km": 2.2 }
+      ],
+      "site_visit": {
+        "available": true,
+        "sample_flat": false,
+        "visit_timings": "11:00 AM - 6:00 PM (Mon-Sat)"
+      }
+    }
+  ],
+  "property_catalog_rules": {
+    "supported_property_types": ["Apartment", "Villa", "Plot", "Office", "Shop"],
+    "supported_actions": ["Buy", "Sell", "Rent"],
+    "search_filters": ["city", "locality", "budget_min", "budget_max", "property_type", "bhk", "ready_to_move", "project_id"]
+  }
+}
