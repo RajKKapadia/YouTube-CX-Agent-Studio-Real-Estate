@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Acme Realty API - Sell Property Callback
+  version: 1.0.0
+servers:
+  - url: 'https://grateful-lemming-clearly.ngrok-free.app'
+paths:
+  /leads/sell-property-callback:
+    post:
+      summary: Register a sell-property callback request
+      operationId: sellPropertyCallback
+      description: >
+        Save a callback request from a user who wants to sell their property so
+        the Acme Realty team can follow up with a valuation or listing consultation.
+        Call this after OTP verification when the user expresses intent to sell.
+        Collect name, mobile, city/locality, and property type as required fields;
+        preferred_time is optional — include it only if the user mentions a
+        convenient time.
+        Examples of when to call this:
+        "I want to sell my flat in Bopal",
+        "Can someone help me list my villa?",
+        "I'm looking to sell my 3 BHK apartment in Ahmedabad",
+        "Please have someone contact me about selling my property".
+      requestBody:
+        required: true
+        description: Seller details for the callback.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - mobile
+                - city_locality
+                - property_type
+              properties:
+                name:
+                  type: string
+                  description: Full name of the seller.
+                  example: Priya Shah
+                mobile:
+                  type: string
+                  description: >
+                    The seller's mobile number. Accepts formats with country code,
+                    spaces, or dashes — e.g. "+91 98765 43210" or "9876543210".
+                  example: '9876543210'
+                city_locality:
+                  type: string
+                  description: >
+                    City and/or locality where the property is located.
+                    Free-text — e.g. "Bopal, Ahmedabad", "Infocity Gandhinagar", "Surat".
+                  example: Bopal, Ahmedabad
+                property_type:
+                  type: string
+                  description: >
+                    Type of property the seller wants to list.
+                    Free-text — e.g. "2 BHK Apartment", "Villa", "Commercial Office",
+                    "Plot", "Row House".
+                  example: 3 BHK Apartment
+                preferred_time:
+                  type: string
+                  description: >
+                    Optional preferred time window for the callback.
+                    Free-text — e.g. "Tomorrow 11am", "Weekday evenings",
+                    "Anytime after 6pm".
+                  example: Tomorrow 11am
+      responses:
+        '200':
+          description: Sell-property callback registered successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - message
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    description: Confirmation message for the user.

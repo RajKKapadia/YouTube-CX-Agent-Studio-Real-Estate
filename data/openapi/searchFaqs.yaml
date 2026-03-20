@@ -1,0 +1,51 @@
+openapi: 3.0.0
+info:
+  title: Acme Realty API - Search FAQs
+  version: 1.0.0
+servers:
+  - url: 'https://grateful-lemming-clearly.ngrok-free.app'
+paths:
+  /faqs/:
+    get:
+      summary: Search company FAQs
+      operationId: searchFaqs
+      description: >
+        Search the Acme Realty FAQ knowledge base.
+        Use this tool when a user asks a general question about company policies,
+        services, processes, or pricing that may already be answered in the FAQs.
+        Examples: "Do you charge brokerage?", "How do I schedule a site visit?",
+        "Do you help with paperwork?", "What services do you offer?".
+        Omit the q parameter to retrieve all FAQs.
+      parameters:
+        - name: q
+          in: query
+          required: false
+          description: >
+            Keyword to search across FAQ questions and answers
+            (case-insensitive, partial match).
+            Examples: "brokerage", "visit", "registration", "loan".
+          schema:
+            type: string
+            example: brokerage
+      responses:
+        '200':
+          description: Matching FAQ entries, or all FAQs when no keyword is given.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of FAQ entries returned.
+                  faqs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        q:
+                          type: string
+                          description: The FAQ question.
+                        a:
+                          type: string
+                          description: The FAQ answer.

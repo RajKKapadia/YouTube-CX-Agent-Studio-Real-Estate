@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: Acme Realty API - Search Projects
+  version: 1.0.0
+servers:
+  - url: 'https://grateful-lemming-clearly.ngrok-free.app'
+paths:
+  /projects/:
+    get:
+      summary: Search real estate projects
+      operationId: searchProjects
+      description: >
+        Search and filter the Acme Realty project catalogue.
+        Use this tool when a user asks about available properties, projects in a
+        specific city or locality, a particular configuration (e.g. 2 BHK), a
+        budget range, a property category (apartment, villa, commercial), or a
+        possession / handover timeline.
+        All query parameters are optional and can be combined freely.
+        Examples of when to call this:
+        "Do you have 2 BHK flats in Ahmedabad?",
+        "Show me villas under 3 crore",
+        "Which projects are ready to move in?",
+        "Any commercial offices in Gandhinagar?"
+      parameters:
+        - name: city
+          in: query
+          required: false
+          description: >
+            Filter by city (case-insensitive).
+            Supported values: Ahmedabad, Gandhinagar, Surat.
+          schema:
+            type: string
+            example: Ahmedabad
+        - name: locality
+          in: query
+          required: false
+          description: >
+            Filter by locality or neighbourhood within a city
+            (case-insensitive, partial match).
+            Examples: Bopal, Thaltej, Infocity.
+          schema:
+            type: string
+            example: Bopal
+        - name: name
+          in: query
+          required: false
+          description: >
+            Filter by project name (case-insensitive, partial match).
+            Example: "Skyline" matches "Skyline Heights".
+          schema:
+            type: string
+            example: Skyline
+        - name: unit_type
+          in: query
+          required: false
+          description: >
+            Filter by unit configuration (case-insensitive, partial match).
+            Examples: "2 BHK", "3 BHK", "4 BHK Villa", "Office Suite".
+          schema:
+            type: string
+            example: 2 BHK
+        - name: property_type
+          in: query
+          required: false
+          description: >
+            Filter by property category (case-insensitive, partial match).
+            Examples: "Apartment", "Villa", "Commercial".
+          schema:
+            type: string
+            example: Villa
+        - name: price_min
+          in: query
+          required: false
+          description: >
+            Minimum price in INR lakh. A project matches if any of its inventory
+            units overlaps this range. Crore-priced units are converted automatically
+            (1 crore = 100 lakh). Example: 60 means 60 lakh.
+          schema:
+            type: number
+            example: 60
+        - name: price_max
+          in: query
+          required: false
+          description: >
+            Maximum price in INR lakh. Example: 300 means 3 crore.
+          schema:
+            type: number
+            example: 300
+        - name: possession
+          in: query
+          required: false
+          description: >
+            Filter by possession / handover timeline (case-insensitive, partial match).
+            Examples: "2027", "2028", "Immediate" for ready-to-move projects.
+          schema:
+            type: string
+            example: Immediate
+      responses:
+        '200':
+          description: Projects matching the given filters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of projects returned.
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        project_id:
+                          type: string
+                          description: Unique identifier for the project.
+                        name:
+                          type: string
+                          description: Display name of the project.
+                        type:
+                          type: string
+                          description: Property category, e.g. "Residential Apartments", "Luxury Villas", "Commercial Offices".
+                        status:
+                          type: string
+                          description: Current sales/construction status, e.g. "Under Construction", "Ready to Move", "New Launch".
+                        city:
+                          type: string
+                        locality:
+                          type: string
+                        address:
+                          type: string
+                        highlights:
+                          type: array
+                          items:
+                            type: string
+                          description: Key selling points of the project.
+                        inventory:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              unit_type:
+                                type: string
+                                description: Configuration label, e.g. "2 BHK", "3 BHK", "4 BHK Villa", "Office Suite".
+                              carpet_sqft_range:
+                                type: array
+                                items:
+                                  type: number
+                                description: "[min, max] carpet area in square feet."
+                              price_range_inr_lakh:
+                                type: array
+                                items:
+                                  type: number
+                                description: "[min, max] price in INR lakh. Present for most residential units."
+                              price_range_inr_crore:
+                                type: array
+                                items:
+                                  type: number
+                                description: "[min, max] price in INR crore. Present for premium/villa units."
+                        possession_timeline:
+                          type: string
+                          description: Estimated handover date or "Immediate" for ready-to-move projects.
+                        amenities:
+                          type: array
+                          items:
+                            type: string
+                        nearby:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              place:
+                                type: string
+                              distance_km:
+                                type: number
+                        site_visit:
+                          type: object
+                          properties:
+                            available:
+                              type: boolean
+                              description: Whether site visits can be scheduled.
+                            sample_flat:
+                              type: boolean
+                              description: Whether a sample / model flat is available to view.
+                            visit_timings:
+                              type: string
+                              description: Days and time window for visits.

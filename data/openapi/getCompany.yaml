@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: Acme Realty API - Get Company
+  version: 1.0.0
+servers:
+  - url: 'https://grateful-lemming-clearly.ngrok-free.app'
+paths:
+  /company/:
+    get:
+      summary: Get company details
+      operationId: getCompany
+      description: >
+        Retrieve the full Acme Realty company profile.
+        Use this tool when a user asks about the company itself — its services,
+        office address, phone number, email, business hours, service areas,
+        or general policies.
+        Examples: "Where is your office?", "What are your working hours?",
+        "Which cities do you operate in?", "How can I contact you?".
+      responses:
+        '200':
+          description: Full company profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  tagline:
+                    type: string
+                  about:
+                    type: string
+                  service_areas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        city:
+                          type: string
+                        primary_localities:
+                          type: array
+                          items:
+                            type: string
+                  services:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        service_key:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                  contact:
+                    type: object
+                    properties:
+                      phone:
+                        type: string
+                      whatsapp:
+                        type: string
+                      email:
+                        type: string
+                      website:
+                        type: string
+                      office_address:
+                        type: string
+                      business_hours:
+                        type: object
+                        properties:
+                          mon_fri:
+                            type: string
+                          sat:
+                            type: string
+                          sun:
+                            type: string
+                  policies:
+                    type: object
+                    properties:
+                      data_privacy_note:
+                        type: string
+                      response_boundary:
+                        type: string
+                  faqs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        q:
+                          type: string
+                          description: The FAQ question.
+                        a:
+                          type: string
+                          description: The FAQ answer.

@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Acme Realty API - Verify OTP
+  version: 1.0.0
+servers:
+  - url: 'https://grateful-lemming-clearly.ngrok-free.app'
+paths:
+  /leads/verify-otp:
+    post:
+      summary: Verify OTP for a mobile number
+      operationId: verifyOtp
+      description: >
+        Verify the 6-digit OTP previously sent to a mobile number.
+        Call this after the user provides the OTP they received.
+        The OTP is single-use — it is deleted on successful verification.
+        Returns HTTP 400 if the OTP is wrong or has not been requested.
+      requestBody:
+        required: true
+        description: Mobile number and the OTP to verify.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+                - otp
+              properties:
+                mobile:
+                  type: string
+                  description: The mobile number the OTP was sent to.
+                  example: '9876543210'
+                otp:
+                  type: string
+                  description: The 6-digit OTP entered by the user.
+                  example: '482910'
+      responses:
+        '200':
+          description: OTP verified successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - message
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Invalid or expired OTP.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    description: Human-readable error message.

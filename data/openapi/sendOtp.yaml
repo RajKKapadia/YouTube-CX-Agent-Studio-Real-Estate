@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  title: Acme Realty API - Send OTP
+  version: 1.0.0
+servers:
+  - url: 'https://grateful-lemming-clearly.ngrok-free.app'
+paths:
+  /leads/send-otp:
+    post:
+      summary: Send OTP to a mobile number
+      operationId: sendOtp
+      description: >
+        Generate and send a 6-digit OTP to the given mobile number.
+        Call this as the first step of the identity-verification flow before
+        registering a callback or capturing a lead.
+        Use when a user provides their phone number and you need to verify it.
+        Note: in this environment the OTP is printed to server logs only.
+      requestBody:
+        required: true
+        description: Mobile number to send the OTP to.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+              properties:
+                mobile:
+                  type: string
+                  description: >
+                    The user's mobile number. Accepts formats with country code,
+                    spaces, or dashes — e.g. "+91 98765 43210" or "9876543210".
+                  example: '9876543210'
+      responses:
+        '200':
+          description: OTP sent successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - message
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    description: Confirmation message.

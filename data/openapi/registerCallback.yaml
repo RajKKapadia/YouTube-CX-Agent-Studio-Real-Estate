@@ -1,0 +1,63 @@
+openapi: 3.0.0
+info:
+  title: Acme Realty API - Register Callback
+  version: 1.0.0
+servers:
+  - url: 'https://grateful-lemming-clearly.ngrok-free.app'
+paths:
+  /leads/register-callback:
+    post:
+      summary: Register a callback request
+      operationId: registerCallback
+      description: >
+        Save a lead's callback request so the Acme Realty team can follow up.
+        Call this after OTP verification when the user confirms they want to be
+        contacted by an advisor.
+        The preferred_time field is optional — collect it if the user mentions
+        a convenient time, otherwise omit it.
+        Examples of when to call this:
+        "Please have someone call me",
+        "I'd like a callback tomorrow morning",
+        "Connect me with an advisor".
+      requestBody:
+        required: true
+        description: Lead details for the callback.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+                - name
+              properties:
+                mobile:
+                  type: string
+                  description: The verified mobile number of the lead.
+                  example: '9876543210'
+                name:
+                  type: string
+                  description: Full name of the lead.
+                  example: Raj Mehta
+                preferred_time:
+                  type: string
+                  description: >
+                    Optional preferred time window for the callback.
+                    Free-text — e.g. "Tomorrow 11am", "Weekday evenings",
+                    "Anytime after 6pm".
+                  example: Tomorrow 11am
+      responses:
+        '200':
+          description: Callback registered successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - message
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    description: Confirmation message for the user.
